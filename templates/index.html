@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaders in the Spotlight - Créateur d'Affiches Personnalisées</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c5093c',
+                        secondary: '#34793a',
+                        gray: '#595959',
+                        dark: '#372d3b',
+                        light: '#ffffff',
+                        black: '#000000'
+                    },
+                    boxShadow: {
+                        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #372d3b;
+        }
+        .image-frame::before {
+            content: "Zone d'image";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.25rem;
+            font-weight: 700;
+            z-index: 1;
+            pointer-events: none;
+        }
+        #user-image {
+            transition: transform 0.12s ease;
+            touch-action: none;
+            will-change: transform;
+            border-radius: 0.75rem;
+        }
+        .template-container {
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .dropzone {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 2px dashed #595959;
+            transition: all 0.3s ease;
+        }
+        .dropzone:hover, .dropzone.drag-over {
+            border-color: #c5093c;
+            background: linear-gradient(145deg, #f1f5f9, #ffffff);
+        }
+        .control-btn {
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        .gradient-bg {
+            background: linear-gradient(87deg, #c5093c 0, #34793a 100%);
+        }
+        .progress-track {
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            background: linear-gradient(to right, #c5093c, #34793a);
+        }
+        .notification {
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(197, 9, 60, 0.3);
+        }
+        .image-frame.has-image::before {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-gray">
+    <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow">
+        <!-- Hero Header -->
+        <header class="relative bg-gradient-to-r from-primary to-secondary text-white py-20 mb-12 rounded-xl overflow-hidden shadow-2xl">
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative container mx-auto px-4 text-center z-10">
+                <h1 class="text-5xl font-bold mb-4 font-poppins">Leaders in the Spotlight</h1>
+                <p class="text-xl mb-6 max-w-2xl mx-auto font-poppins">Créez une affiche personnalisée pour l'événement. Téléchargez, ajustez, prévisualisez et téléchargez votre création !</p>
+                <div class="inline-block p-4 rounded-full bg-white bg-opacity-20">
+                    <i class="fas fa-star text-4xl text-yellow-300"></i>
+                </div>
+            </div>
+        </header>
+
+        <form id="poster-form" action="/send-email" method="POST" enctype="multipart/form-data">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Upload Section -->
+                <div class="bg-white rounded-xl shadow-xl p-6 h-fit glass-effect">
+                    <h2 class="text-xl font-bold text-dark mb-4 flex items-center gap-2 font-poppins">
+                        <i class="fas fa-upload text-primary"></i>
+                        Étape 1: Télécharger votre image
+                    </h2>
+                    
+                    <div id="drop-area" class="dropzone rounded-xl p-8 text-center mb-6">
+                        <div class="inline-block p-4 rounded-full bg-gray-100 mb-4">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-primary"></i>
+                        </div>
+                        <p class="text-gray mb-4 font-poppins">Glissez-déposez votre image ici ou cliquez pour sélectionner</p>
+                        <input type="file" id="image-upload" accept="image/*" class="hidden">
+                        <button type="button" id="upload-btn" class="control-btn bg-primary hover:bg-red-700 text-white font-medium py-2.5 px-8 rounded-lg font-poppins">
+                            Sélectionner une image
+                        </button>
+                        <p class="text-sm text-gray mt-4 font-poppins">Formats supportés: JPG, PNG, GIF (max 10MB)</p>
+                    </div>
+                    
+                    <div id="preview-container" class="hidden bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-4 mb-6">
+                        <h3 class="font-medium text-gray mb-2 flex items-center gap-2 font-poppins">
+                            <i class="fas fa-eye text-secondary"></i>
+                            Aperçu de votre image:
+                        </h3>
+                        <div class="border border-gray rounded-lg overflow-hidden shadow-sm">
+                            <img id="image-preview" class="max-h-64 w-full object-contain">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="flex justify-between text-sm text-gray mb-1 font-poppins">
+                            <span>Progression</span>
+                            <span id="progress-text">0%</span>
+                        </div>
+                        <div class="h-2.5 rounded-full overflow-hidden progress-track">
+                            <div id="progress-bar" class="h-full progress-bar rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- User Info Form -->
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold text-dark mb-3 flex items-center gap-2 font-poppins">
+                            <i class="fas fa-user-circle text-primary"></i>
+                            Vos informations
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="user-name" class="block text-sm font-medium text-gray mb-1 font-poppins">Votre nom</label>
+                                <input type="text" id="user-name" name="user-name" class="form-input w-full px-4 py-2 border border-gray rounded-lg focus:ring-primary focus:border-primary font-poppins" required>
+                            </div>
+                            <div>
+                                <label for="user-email" class="block text-sm font-medium text-gray mb-1 font-poppins">Votre email</label>
+                                <input type="email" id="user-email" name="user-email" class="form-input w-full px-4 py-2 border border-gray rounded-lg focus:ring-primary focus:border-primary font-poppins" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Editor Section -->
+                <div class="bg-white rounded-xl shadow-xl p-6 glass-effect">
+                    <!-- Final Preview Container -->
+                    <div id="final-preview-container" class="hidden mb-6 bg-gray-100 rounded-lg p-4">
+                        <h3 class="font-medium text-gray mb-2 flex items-center gap-2 font-poppins">
+                            <i class="fas fa-image text-secondary"></i>
+                            Aperçu final (zoom et ajustements appliqués) :
+                        </h3>
+                        <div class="border border-gray rounded-lg overflow-hidden shadow-sm">
+                            <img id="final-preview" class="w-full h-auto">
+                        </div>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-dark mb-4 flex items-center gap-2 font-poppins">
+                        <i class="fas fa-edit text-primary"></i>
+                        Étape 2: Ajuster votre image
+                    </h2>
+                    
+                    <div class="mb-4 bg-gray-100 rounded-lg p-3">
+                        <div class="flex items-start gap-3 text-sm text-gray font-poppins">
+                            <i class="fas fa-info-circle text-primary mt-1"></i>
+                            <div>
+                                <p>Positionnez votre image au centre du cadre en utilisant la souris ou le tactile</p>
+                                <p class="mt-1 font-medium text-primary">Vous pouvez recadrer avec le tactile en glissant l'image</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Template Container -->
+                    <div class="relative mx-auto mb-6 template-container">
+                        <div id="poster" class="relative w-full h-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden" style="aspect-ratio: 2314/2747;">
+                            <!-- Background Template -->
+                            <div id="template-container" class="absolute inset-0">
+                                <img id="template-img" src="{{ url_for('static', filename='template.jpg') }}" class="w-full h-full object-cover">
+                            </div>
+
+                            <!-- Image Frame -->
+                            <div id="frame" 
+                                class="image-frame absolute border-4 border-primary rounded-xl overflow-hidden shadow-lg"
+                                style="
+                                    left: 23.38%;
+                                    top: 30.11%;
+                                    width: 46.72%;
+                                    height: 45.69%;
+                                ">
+                                <img id="user-image" class="absolute inset-0 w-full h-full object-cover cursor-grab" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray text-center mt-2 font-poppins">Glissez l'image pour la positionner (ou utilisez le tactile)</p>
+                    
+                    <!-- Controls -->
+                    <div class="bg-gray-100 rounded-xl p-5 mb-6 shadow-inner">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray mb-2 font-poppins">Zoom</label>
+                                <div class="flex gap-2">
+                                    <button type="button" id="zoom-out" class="control-btn w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                        <i class="fas fa-search-minus text-gray"></i>
+                                    </button>
+                                    <button type="button" id="zoom-in" class="control-btn w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                        <i class="fas fa-search-plus text-gray"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray mb-2 font-poppins">Rotation</label>
+                                <div class="flex gap-2">
+                                    <button type="button" id="rotate-left" class="control-btn w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                        <i class="fas fa-undo text-gray"></i>
+                                    </button>
+                                    <button type="button" id="rotate-right" class="control-btn w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                        <i class="fas fa-redo text-gray"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray mb-2 font-poppins">Position</label>
+                                <div class="flex gap-2">
+                                    <button type="button" id="center-image" class="control-btn px-4 py-2 bg-white text-sm font-poppins">
+                                        <i class="fas fa-crosshairs mr-2"></i>Centrer
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray mb-2 font-poppins">Réinitialiser</label>
+                                <button type="button" id="reset-image" class="control-btn w-full px-4 py-2 bg-white text-sm font-poppins">
+                                    <i class="fas fa-sync mr-2"></i>Tout réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Download Section -->
+                    <div class="gradient-bg rounded-xl p-1 shadow-lg">
+                        <div class="bg-white rounded-lg p-5">
+                            <h3 class="text-lg font-semibold text-dark mb-3 flex items-center gap-2 font-poppins">
+                                <i class="fas fa-download text-primary"></i>
+                                Étape 3: Prévisualiser et télécharger votre affiche
+                            </h3>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="button" id="modify-btn" class="control-btn flex-1 bg-secondary hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-poppins">
+                                    <i class="fas fa-edit"></i>
+                                    Modifier
+                                </button>
+                                <button type="submit" id="download-btn" class="control-btn flex-1 bg-primary hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-poppins" disabled>
+                                    <i class="fas fa-download"></i>
+                                    Télécharger
+                                </button>
+                                <button type="button" id="new-btn" class="control-btn flex-1 bg-light hover:bg-gray-200 text-gray font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-poppins">
+                                    <i class="fas fa-plus"></i>
+                                    Nouvelle création
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray mt-3 flex items-center gap-2 font-poppins">
+                                <i class="fas fa-info-circle text-primary"></i>
+                                Dimensions: 2314px × 2747px - Qualité maximale
+                            </p>
+                            <input type="hidden" id="poster-data" name="poster-data">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2 font-poppins">Ce formulaire a été créé par <span class="font-bold">Vorian</span></p>
+            <p class="text-sm text-gray-200 font-poppins">
+                Contactez-nous sur <a href="mailto:vorianhub@gmail.com" class="text-secondary hover:underline">vorianhub@gmail.com</a> pour votre propre version
+            </p>
+        </div>
+    </footer>
+
+    <!-- Floating notification -->
+    <div id="notification" class="notification fixed bottom-4 right-4 bg-secondary text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 flex items-center gap-3">
+        <i class="fas fa-check-circle text-xl"></i>
+        <span>Affiche téléchargée et envoyée par email avec succès !</span>
+    </div>
+
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
