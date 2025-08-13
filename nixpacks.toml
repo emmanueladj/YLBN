@@ -1,0 +1,11 @@
+[phases.setup]
+packages = ["python3", "pip"]
+
+[phases.install]
+commands = ["pip install -r requirements.txt"]
+
+[phases.build]
+commands = ["echo Build phase"]
+
+[phases.start]
+commands = ["python app.py"]
