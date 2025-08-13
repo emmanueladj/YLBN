@@ -67,5 +67,9 @@ def send_mail(subject, to_email, html_body):
         server.login(FROM_EMAIL, FROM_PASSWORD)
         server.send_message(msg)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))  # Railway fournit le port via la variable d'environnement
+    app.run(host="0.0.0.0", port=port, debug=False)
+
     app.run(debug=True)
